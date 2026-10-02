@@ -3,7 +3,21 @@
 Answers developer questions from **technical documentation** and **public GitHub issues**, with
 **citations** to the original sources, and **abstains** when the evidence is insufficient.
 
-Stack: Python · FastAPI · Supabase PostgreSQL + pgvector · Streamlit · Pydantic · OpenAI-compatible embeddings · OpenAI or Anthropic LLM.
+Stack: Python · FastAPI · Supabase PostgreSQL + pgvector · Streamlit · Pydantic · OpenAI-compatible embeddings · OpenAI LLM.
+
+### Why this project?
+
+Developer support often means searching through documentation, GitHub issues, and scattered technical resources to find one reliable answer.
+
+This project builds a support agent that:
+
+- 🔎 Retrieves relevant documentation using vector + full-text hybrid search
+- 🤖 Generates answers using an LLM grounded in retrieved evidence
+- 🔗 Provides citations back to the original sources
+- 🛑 Abstains when there isn't enough evidence instead of guessing
+- 📚 Ingests documentation, GitHub issues, local files, and public web pages
+- 💬 Provides a Streamlit chat interface
+- 📊 Includes retrieval and answer-grounding evaluation
 
 > **Two modes.**
 > **Demo mode (default)** needs *no* API keys and *no* database: offline hashing embeddings, an extractive
