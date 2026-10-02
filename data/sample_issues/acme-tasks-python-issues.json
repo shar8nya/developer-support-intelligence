@@ -1,0 +1,173 @@
+[
+  {
+    "repo": "acme/acme-tasks-python",
+    "number": 101,
+    "title": "Refresh token returns 401 after rotation when using AsyncClient",
+    "state": "closed",
+    "body": "After the first successful token refresh, `AsyncClient` keeps sending the old refresh token on the next refresh and the API answers 401. Sync `Client` works fine. Version 1.4.0, Python 3.11.",
+    "labels": [
+      {
+        "name": "bug"
+      },
+      {
+        "name": "async"
+      },
+      {
+        "name": "auth"
+      }
+    ],
+    "html_url": "https://github.com/acme/acme-tasks-python/issues/101",
+    "created_at": "2026-03-02T10:00:00Z",
+    "comments": 2,
+    "comments_data": [
+      {
+        "user": {
+          "login": "maintainer-jo"
+        },
+        "body": "Reproduced. The async refresh path cached the old refresh token, so it was reused after rotation and the token family got revoked. Fixed in 1.4.2 by storing the new refresh token after every refresh."
+      },
+      {
+        "user": {
+          "login": "dev-user"
+        },
+        "body": "Confirmed fixed in 1.4.2. Until you can upgrade, create a new AsyncClient with the latest refresh token after each refresh."
+      }
+    ]
+  },
+  {
+    "repo": "acme/acme-tasks-python",
+    "number": 118,
+    "title": "Webhook signature verification fails for payloads containing unicode",
+    "state": "closed",
+    "body": "Signature check with `verify_signature(body, header)` fails when the JSON payload includes non-ASCII characters such as emoji in task titles. ASCII-only payloads verify fine.",
+    "labels": [
+      {
+        "name": "bug"
+      },
+      {
+        "name": "webhooks"
+      }
+    ],
+    "html_url": "https://github.com/acme/acme-tasks-python/issues/118",
+    "created_at": "2026-03-19T09:30:00Z",
+    "comments": 1,
+    "comments_data": [
+      {
+        "user": {
+          "login": "maintainer-jo"
+        },
+        "body": "The bug was in our example code: it decoded the body to a string and re-encoded it. The HMAC must be computed over the exact raw bytes. Use `request.body` bytes directly. Fixed in 1.5.0 and the docs now say so."
+      }
+    ]
+  },
+  {
+    "repo": "acme/acme-tasks-python",
+    "number": 124,
+    "title": "429 responses from the bulk endpoint have no Retry-After header",
+    "state": "open",
+    "body": "When `POST /v1/tasks/bulk` is rate limited, the 429 response has no `Retry-After` header, so the SDK falls back to its default backoff. Other endpoints do send the header.",
+    "labels": [
+      {
+        "name": "bug"
+      },
+      {
+        "name": "rate-limits"
+      }
+    ],
+    "html_url": "https://github.com/acme/acme-tasks-python/issues/124",
+    "created_at": "2026-04-05T14:12:00Z",
+    "comments": 1,
+    "comments_data": [
+      {
+        "user": {
+          "login": "maintainer-ana"
+        },
+        "body": "Confirmed on the server side, this is an API gateway issue and not an SDK bug. As a workaround read `X-RateLimit-Reset` and wait until that timestamp. No fix date yet."
+      }
+    ]
+  },
+  {
+    "repo": "acme/acme-tasks-python",
+    "number": 131,
+    "title": "next_cursor is null although more results exist when filtering by label",
+    "state": "open",
+    "body": "Listing tasks with `labels=urgent&limit=10` returns 10 tasks and `next_cursor: null`, but there are more than 10 urgent tasks. Without the label filter pagination works.",
+    "labels": [
+      {
+        "name": "bug"
+      },
+      {
+        "name": "pagination"
+      }
+    ],
+    "html_url": "https://github.com/acme/acme-tasks-python/issues/131",
+    "created_at": "2026-04-20T08:45:00Z",
+    "comments": 2,
+    "comments_data": [
+      {
+        "user": {
+          "login": "dev-user2"
+        },
+        "body": "Same here. Workaround: request a larger `limit` (up to 100) and filter client side, or query without the label filter and paginate normally."
+      },
+      {
+        "user": {
+          "login": "maintainer-ana"
+        },
+        "body": "Investigating, seems related to how the cursor is built for filtered queries."
+      }
+    ]
+  },
+  {
+    "repo": "acme/acme-tasks-python",
+    "number": 140,
+    "title": "Attachment upload fails with 413 for a 40 MB video",
+    "state": "closed",
+    "body": "Uploading a 40 MB screen recording with `client.attachments.upload()` fails with HTTP 413 and code `payload_too_large`.",
+    "labels": [
+      {
+        "name": "question"
+      },
+      {
+        "name": "attachments"
+      }
+    ],
+    "html_url": "https://github.com/acme/acme-tasks-python/issues/140",
+    "created_at": "2026-05-11T16:00:00Z",
+    "comments": 1,
+    "comments_data": [
+      {
+        "user": {
+          "login": "maintainer-jo"
+        },
+        "body": "This is expected: attachments are limited to 25 MB. Compress the file or host it elsewhere and attach the link to the task instead. Closing as working as designed."
+      }
+    ]
+  },
+  {
+    "repo": "acme/acme-tasks-python",
+    "number": 147,
+    "title": "Idempotency-Key header is ignored on PATCH requests",
+    "state": "open",
+    "body": "I send `Idempotency-Key` on PATCH /v1/tasks/{id} but repeated calls are applied twice. The docs only mention POST.",
+    "labels": [
+      {
+        "name": "docs"
+      },
+      {
+        "name": "idempotency"
+      }
+    ],
+    "html_url": "https://github.com/acme/acme-tasks-python/issues/147",
+    "created_at": "2026-05-28T12:20:00Z",
+    "comments": 1,
+    "comments_data": [
+      {
+        "user": {
+          "login": "maintainer-ana"
+        },
+        "body": "Idempotency keys are only honored on POST requests. PATCH is naturally idempotent when you send absolute values. We will clarify this in the docs."
+      }
+    ]
+  }
+]
